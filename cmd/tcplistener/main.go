@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"net"
+
+	"github.com/Rawan-Temo/tcp-to-http.git/internal/request"
 )
 
 func main() {
@@ -23,9 +25,17 @@ func main() {
 
 		fmt.Println("Connection accepted")
 
-		for line := range getLinesChannel(conn) {
-			fmt.Println(line)
+		req, err := request.RequestFromReader(conn)
+		if err != nil {
+			log.Fatal(err)
 		}
+
+		fmt.Printf("RequestLine.HttpVersion: %v\n", req.RequestLine.HttpVersion)
+		fmt.Printf("RequestLine.Method: %v\n", req.RequestLine.Method)
+		fmt.Printf("RequestLine.RequestTarget: %v\n", req.RequestLine.RequestTarget)
+		// for line := range getLinesChannel(conn) {
+		// 	fmt.Println(line)
+		// }
 
 		fmt.Println("Connection closed")
 	}

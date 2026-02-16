@@ -1,6 +1,7 @@
 package request
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -16,7 +17,7 @@ type RequestLine struct {
 	Method        string
 }
 
-var ERROR_START_LINE = fmt.Errorf(" ERROR")
+var ERROR_START_LINE = fmt.Errorf(" ERROR PARSING REQUEST LINE ")
 
 var SEPERATOR = "\r\n"
 
@@ -50,7 +51,7 @@ func RequestFromReader(reader io.Reader) (*Request, error) {
 	for !request.done() {
 		n, err := reader.Read(buff[buffLen:])
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 			return nil, err
